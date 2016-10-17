@@ -22,7 +22,7 @@ class ModulesServiceProvider extends ServiceProvider
      * Boot the service provider.
      */
     public function boot()
-    {
+    {        
         $this->publishes([
             __DIR__.'/../config/modules.php' => config_path('modules.php'),
         ], 'config');
@@ -31,6 +31,12 @@ class ModulesServiceProvider extends ServiceProvider
             __DIR__.'/../database/migrations/' => database_path('migrations')
         ], 'migrations');
 
+        $this->app->singleton('modules', function ($app) {
+            $repository = $app->make(Repository::class);
+
+            return new Modules($app, $repository);
+        });
+        
         $this->app['modules']->register();
     }
 
@@ -48,12 +54,6 @@ class ModulesServiceProvider extends ServiceProvider
         $this->app->register(HelperServiceProvider::class);
         $this->app->register(MigrationServiceProvider::class);
         $this->app->register(RepositoryServiceProvider::class);
-
-        $this->app->singleton('modules', function ($app) {
-            $repository = $app->make(Repository::class);
-
-            return new Modules($app, $repository);
-        });
     }
 
     /**
