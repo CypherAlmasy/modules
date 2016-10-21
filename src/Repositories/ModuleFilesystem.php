@@ -3,7 +3,7 @@
 namespace Caffeinated\Modules\Repositories;
 
 use Illuminate\Config\Repository as Config;
-use Illuminate\Contracts\Filesystem\Filesystem;
+use File;
 
 /**
  * Description of ModuleFilesystem
@@ -18,19 +18,13 @@ class ModuleFilesystem
     private $config;
     
     /**
-     * @var Filesystem $filesystem
-     */
-    private $filesystem;
-    
-    /**
      * @var string $path
      */
     private $path;
     
-    public function __construct(Config $config, Filesystem $filesystem)
+    public function __construct(Config $config)
     {
         $this->config = $config;
-        $this->filesystem = $filesystem;
     }
 
     /**
@@ -56,18 +50,12 @@ class ModuleFilesystem
     public function getAllBasenames()
     {
         $path = $this->getPath();
+        $collection = collect(File::directories($path));
+        $basenames = $collection->map(function ($item) {
+            return File::basename($item);
+        });
 
-        try {
-            $collection = collect($this->filesystem->directories($path));
-
-            $basenames = $collection->map(function ($item, $key) {
-                return basename($item);
-            });
-
-            return $basenames;
-        } catch (\InvalidArgumentException $e) {
-            return collect(array());
-        }
+        return $basenames;
     }
 
     public function getAllManifests()
@@ -100,10 +88,8 @@ class ModuleFilesystem
     {
         if (! is_null($basename)) {
             $path       = $this->getManifestPath($basename);
-            $contents   = $this->filesystem->get($path);
-            $collection = collect(json_decode($contents, true));
-
-            return $collection;
+            $contents   = File::get($path);
+            return collect(json_decode($contents, true));
         }
 
         return;
