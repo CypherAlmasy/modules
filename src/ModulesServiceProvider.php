@@ -17,7 +17,7 @@ class ModulesServiceProvider extends ServiceProvider
     /**
      * @var bool Indicates if loading of the provider is deferred.
      */
-    protected $defer = false;
+    protected $defer = true;
 
     /**
      * Boot the service provider.
