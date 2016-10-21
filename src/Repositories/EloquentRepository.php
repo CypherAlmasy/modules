@@ -135,7 +135,6 @@ class EloquentRepository implements Repository
                 'description' => $manifest['description'],
                 'version' => $manifest['version'],
                 'manifest' => $manifest->toJson(),
-                'provider' => $manifest->get('provider', 'Provider'),
                 'router' => $manifest->get('router', 'Router'),
                 'credentials' => $manifest->get('credentials', null),
             ];
