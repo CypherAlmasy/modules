@@ -140,7 +140,8 @@ class EloquentRepository implements Repository
                 'credentials' => $manifest->get('credentials', null),
             ];
             $model = $this->model->firstOrNew(['basename' => $basename]);
-            $model->update($modelDetails);
+            $model->fill($modelDetails);
+            $model->save();
         }
     }
 
