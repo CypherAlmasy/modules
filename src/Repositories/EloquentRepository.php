@@ -139,7 +139,7 @@ class EloquentRepository implements Repository
                 'router' => $manifest->get('router', 'Router'),
                 'credentials' => $manifest->get('credentials', null),
             ];
-            $model = $this->model->firstOrCreate(['basename' => $basename]);
+            $model = $this->model->firstOrNew(['basename' => $basename]);
             $model->update($modelDetails);
         }
     }
