@@ -130,20 +130,7 @@ class EloquentRepository implements Repository
     {
         $manifests = $this->moduleFiles->getAllManifests();
         $model = $this->model;
-        foreach ($manifests as $basename => $manifestData) {
-            /**$modelDetails = [
-                'name' => $manifest['name'],
-                'slug' => $manifest['slug'],
-                'description' => $manifest['description'],
-                'version' => $manifest['version'],
-                'manifest' => $manifest->toJson(),
-                'router' => $manifest->get('router', 'Router'),
-                'credentials' => $manifest->get('credentials', null),
-            ];
-            $model = $this->model->firstOrNew(['basename' => $basename]);
-            $model->fill($modelDetails);
-            $model->save();**/
-            
+        foreach ($manifests as $basename => $manifestData) {          
             $manifest = new Manifest($manifestData);
             $manifest->setBasename($basename);
             $model::createOrUpdateFromManifest($manifest);
