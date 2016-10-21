@@ -13,8 +13,19 @@ return [
     |
     */
 
-    'path' => app_path('Modules'),
+    'path' => app_path('Hosts'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Module model
+    |--------------------------------------------------------------------------
+    |
+    | The Eloquent model representing a module when using the database 
+    | repository
+    |
+    */
+    'model' => 'Slash\\Models\\Host',
+    
     /*
     |--------------------------------------------------------------------------
     | Modules Default State
@@ -39,7 +50,7 @@ return [
     |
     */
 
-    'namespace' => 'App\Modules\\',
+    'namespace' => 'Slash\\Hosts\\',
 
     /*
     |--------------------------------------------------------------------------
@@ -54,5 +65,5 @@ return [
     |
     */
 
-    'driver' => 'local',
+    'driver' => 'database',
 ];

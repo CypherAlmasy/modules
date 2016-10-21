@@ -2,8 +2,37 @@
 
 namespace Caffeinated\Modules\Repositories;
 
-class LocalRepository extends Repository
+use Caffeinated\Modules\Contracts\Repository as RepositoryContract;
+use Illuminate\Config\Repository as Config;
+use Illuminate\Filesystem\Filesystem;
+
+class LocalRepository implements RepositoryContract
 {
+    /**
+     * @var Config $config
+     */
+    private $config;
+    
+    /**
+     * @var Filesystem $files
+     */
+    private $files;
+    
+    /**
+     * @var ModuleFilesystem $moduleFiles
+     */
+    private $moduleFiles;
+    
+    public function __construct(
+        Config $config,
+        Filesystem $files,
+        ModuleFilesystem $moduleFiles
+    ) {
+        $this->config = $config;
+        $this->files = $files;
+        $this->moduleFiles = $moduleFiles;
+    }
+    
     /**
      * Get all modules.
      *
@@ -40,7 +69,7 @@ class LocalRepository extends Repository
      */
     public function where($key, $value)
     {
-        return collect($this->all()->where($key, $value)->first());
+        return collect($this->all()->where($key, $value));
     }
 
     /**
@@ -52,9 +81,7 @@ class LocalRepository extends Repository
      */
     public function sortBy($key)
     {
-        $collection = $this->all();
-
-        return $collection->sortBy($key);
+        return $this->all()->sortBy($key);
     }
 
     /**
@@ -66,9 +93,7 @@ class LocalRepository extends Repository
      */
     public function sortByDesc($key)
     {
-        $collection = $this->all();
-
-        return $collection->sortByDesc($key);
+        return $this->all()->sortByDesc($key);
     }
 
     /**
@@ -80,7 +105,7 @@ class LocalRepository extends Repository
      */
     public function exists($slug)
     {
-        return $this->slugs()->contains(str_slug($slug));
+        return $this->slugs()->contains($slug);
     }
 
     /**
@@ -104,10 +129,7 @@ class LocalRepository extends Repository
     public function get($property, $default = null)
     {
         list($slug, $key) = explode('::', $property);
-
-        $module = $this->where('slug', $slug);
-
-        return $module->get($key, $default);
+        return $this->where('slug', $slug)->get($key, $default);
     }
 
     /**
@@ -132,9 +154,9 @@ class LocalRepository extends Repository
 
         $module[$key] = $value;
 
-        $module = collect([$module['basename'] => $module]);
+        $newModule = collect([$module['basename'] => $module]);
 
-        $merged  = $cache->merge($module);
+        $merged  = $cache->merge($newModule);
         $content = json_encode($merged->all(), JSON_PRETTY_PRINT);
 
         return $this->files->put($cachePath, $content);
@@ -212,6 +234,13 @@ class LocalRepository extends Repository
         return $this->set($slug.'::enabled', false);
     }
 
+    
+    public function getManifest($slug)
+    {
+        $basename = $this->get($slug . '::basename');
+        return $this->moduleFiles->getManifest($basename);
+    }
+    
     /*
     |--------------------------------------------------------------------------
     | Optimization Methods
@@ -229,29 +258,19 @@ class LocalRepository extends Repository
         $cachePath = $this->getCachePath();
 
         $cache     = $this->getCache();
-        $basenames = $this->getAllBasenames();
+        $basenames = $this->moduleFiles->getAllBasenames();
         $modules   = collect();
 
         $basenames->each(function ($module, $key) use ($modules, $cache) {
-            $basename = collect(['basename' => $module]);
-            $temp     = $basename->merge(collect($cache->get($module)));
-            $manifest = $temp->merge(collect($this->getManifest($module)));
+            $manifest = collect(['basename' => $module])
+                ->merge(collect($cache->get($module)))
+                ->merge(collect($this->moduleFiles->getManifest($module)));
 
+            if (! $manifest->has('enabled')) {
+                $manifest->put('enabled', config('modules.enabled', true));
+            }
+            
             $modules->put($module, $manifest);
-        });
-
-        $modules->each(function ($module) {
-            $module->put('id', crc32($module->get('slug')));
-
-            if (! $module->has('enabled')) {
-                $module->put('enabled', config('modules.enabled', true));
-            }
-
-            if (! $module->has('order')) {
-                $module->put('order', 9001);
-            }
-
-            return $module;
         });
 
         $content = json_encode($modules->all(), JSON_PRETTY_PRINT);

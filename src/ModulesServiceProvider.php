@@ -10,6 +10,7 @@ use Caffeinated\Modules\Providers\HelperServiceProvider;
 use Caffeinated\Modules\Providers\MigrationServiceProvider;
 use Caffeinated\Modules\Providers\RepositoryServiceProvider;
 use Illuminate\Support\ServiceProvider;
+use Caffeinated\Modules\Repositories\EloquentRepository;
 
 class ModulesServiceProvider extends ServiceProvider
 {
@@ -22,7 +23,16 @@ class ModulesServiceProvider extends ServiceProvider
      * Boot the service provider.
      */
     public function boot()
-    {        
+    {
+        $this->app->resolving(
+            EloquentRepository::class,
+            function(EloquentRepository $repository, $app) {
+                return $repository->setModel(
+                    $app->make(config('modules.model'))
+                );
+            }
+        );
+        
         $this->publishes([
             __DIR__.'/../config/modules.php' => config_path('modules.php'),
         ], 'config');
@@ -81,4 +91,5 @@ class ModulesServiceProvider extends ServiceProvider
 
         return array_map('realpath', $files);
     }
+    
 }
