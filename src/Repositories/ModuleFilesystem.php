@@ -22,6 +22,11 @@ class ModuleFilesystem
      */
     private $filesystem;
     
+    /**
+     * @var string $path
+     */
+    private $path;
+    
     public function __construct(Config $config, Filesystem $filesystem)
     {
         $this->config = $config;
@@ -36,6 +41,11 @@ class ModuleFilesystem
     public function getPath()
     {
         return $this->path ?: $this->config->get('modules.path');
+    }
+    
+    public function setPath($path)
+    {
+        $this->path = $path;
     }
     
     /**
