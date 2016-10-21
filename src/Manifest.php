@@ -78,7 +78,7 @@ class Manifest
         $this->slug = $collection->get('slug');
         $this->description = $collection->get('description');
         $this->version = $collection->get('version');
-        $this->router = $collection->get('router');
+        $this->router = $collection->get('router', 'Router');
         $this->credentials = $collection->get('credentials');
         $this->credentialTypes = collect($collection->get('credentialTypes'));
         $this->strategies = collect($collection->get('strategies'));
