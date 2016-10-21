@@ -2,6 +2,7 @@
 
 namespace Caffeinated\Modules\Repositories;
 
+use Caffeinated\Modules\Manifest;
 use Caffeinated\Modules\Contracts\Repository;
 use Caffeinated\Modules\Repositories\ModuleFilesystem;
 use Illuminate\Database\Eloquent\Model;
@@ -128,8 +129,9 @@ class EloquentRepository implements Repository
     public function optimize()
     {
         $manifests = $this->moduleFiles->getAllManifests();
-        foreach ($manifests as $basename => $manifest) {
-            $modelDetails = [
+        $model = $this->model;
+        foreach ($manifests as $basename => $manifestData) {
+            /**$modelDetails = [
                 'name' => $manifest['name'],
                 'slug' => $manifest['slug'],
                 'description' => $manifest['description'],
@@ -140,7 +142,11 @@ class EloquentRepository implements Repository
             ];
             $model = $this->model->firstOrNew(['basename' => $basename]);
             $model->fill($modelDetails);
-            $model->save();
+            $model->save();**/
+            
+            $manifest = new Manifest($manifestData);
+            $manifest->setBasename($basename);
+            $model::createOrUpdateFromManifest($manifest);
         }
     }
 
