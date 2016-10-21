@@ -65,5 +65,5 @@ return [
     |
     */
 
-    'driver' => 'database',
+    'driver' => 'eloquent',
 ];
