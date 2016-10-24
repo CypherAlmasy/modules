@@ -206,4 +206,17 @@ class Manifest
         ]));
     }
 
+    public function getHostDetails()
+    {
+        return collect([
+            'name' => $this->name,
+            'basename' => $this->basename,
+            'slug' => $this->slug,
+            'description' => $this->description,
+            'version' => $this->version,
+            'router' => $this->router,
+            'credentials' => $this->credentials,
+        ]);
+    }
+
 }
