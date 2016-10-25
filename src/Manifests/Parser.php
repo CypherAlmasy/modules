@@ -48,15 +48,15 @@ class Parser
     }
     
     /**
-     * Get an array of CredentialType manifests for the host
+     * Get a collection of CredentialType manifests for the host
      * 
-     * @return \Caffeinated\Modules\Manifests\CredentialType[]
+     * @return Collection
      */
     private function credentialTypeManifests()
     {
-        $types = [];
+        $types = collect();
         foreach ($this->data['credentialTypes'] as $type) {
-            $types[] = $this->createCredentialTypeManifest($type);
+            $types->push($this->createCredentialTypeManifest($type));
         }
         return $types;
     }
@@ -68,9 +68,11 @@ class Parser
      */
     private function createCredentialTypeManifest(array $data)
     {
-        $elements = [];
+        $elements = collect();
         foreach ($data['elements'] as $element) {
-            $elements[] = $this->createCredentialTypeElementManifest($element);
+            $elements->push(
+                $this->createCredentialTypeElementManifest($element)
+            );
         }
         
         return new CredentialType(collect($data), $elements);
@@ -85,10 +87,12 @@ class Parser
      */
     private function createCredentialTypeElementManifest(array $data)
     {
-        $options = [];
+        $options = collect();
         if (isset($data['options'])) {
             foreach ($data['options'] as $option) {
-                $options[] = new CredentialTypeElementOption(collect($option));
+                $options->push(
+                    new CredentialTypeElementOption(collect($option))
+                );
             }
         }
         
@@ -97,9 +101,9 @@ class Parser
     
     private function strategyManifests()
     {
-        $strategies = [];
+        $strategies = collect();
         foreach ($this->data['strategies'] as $strategy) {
-            $strategies[] = new Strategy(collect($strategy));
+            $strategies->push(new Strategy(collect($strategy)));
         }
         return $strategies;
     }

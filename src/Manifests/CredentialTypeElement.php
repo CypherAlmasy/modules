@@ -47,13 +47,13 @@ class CredentialTypeElement
     private $rules;
     
     /**
-     * @var CredentialTypeElementOption[] $options
+     * @var Collection $options
      */
     private $options;
     
     public function __construct(
         Collection $data,
-        array $options
+        Collection $options
     ) {
         $this->name = $data->get('name');
         $this->description = $data->get('description');

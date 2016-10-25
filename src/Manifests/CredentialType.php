@@ -28,7 +28,7 @@ class CredentialType
     
     public function __construct(
         Collection $data,
-        array $elements
+        Collection $elements
     ) {
         $this->name = $data->get('name');
         $this->description = $data->get('description');
