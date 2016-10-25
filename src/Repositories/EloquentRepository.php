@@ -2,7 +2,7 @@
 
 namespace Caffeinated\Modules\Repositories;
 
-use Caffeinated\Modules\Manifest;
+use Caffeinated\Modules\Manifests\Parser;
 use Caffeinated\Modules\Contracts\Repository;
 use Caffeinated\Modules\Repositories\ModuleFilesystem;
 use Illuminate\Database\Eloquent\Model;
@@ -130,9 +130,9 @@ class EloquentRepository implements Repository
     {
         $manifests = $this->moduleFiles->getAllManifests();
         $model = $this->model;
-        foreach ($manifests as $basename => $manifestData) {          
-            $manifest = new Manifest($manifestData);
-            $manifest->setBasename($basename);
+        foreach ($manifests as $basename => $manifestData) {
+            $manifestData['basename'] = $basename;
+            $parser = (new Parser($manifestData))->manifest();
             $model::createOrUpdateFromManifest($manifest);
         }
     }

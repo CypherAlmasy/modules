@@ -32,6 +32,11 @@ class Host
     private $description;
     
     /**
+     * @var string $manifest
+     */
+    private $manifest;
+    
+    /**
      * @var string $version
      */
     private $version;
@@ -82,6 +87,7 @@ class Host
         $this->basename = $collection->get('basename');
         $this->slug = $collection->get('slug');
         $this->description = $collection->get('description');
+        $this->manifest = $collection->get('manifest');
         $this->version = $collection->get('version');
         $this->router = $collection->get('router', 'Router');
         $this->credentials = $collection->get('credentials');
@@ -112,6 +118,11 @@ class Host
         return $this->description;
     }
 
+    public function getManifest()
+    {
+        return $this->manifest;
+    }
+    
     public function getVersion()
     {
         return $this->version;

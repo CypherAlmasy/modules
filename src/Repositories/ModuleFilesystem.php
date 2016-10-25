@@ -89,7 +89,9 @@ class ModuleFilesystem
         if (! is_null($basename)) {
             $path       = $this->getManifestPath($basename);
             $contents   = File::get($path);
-            return collect(json_decode($contents, true));
+            $manifest   = collect(json_decode($contents, true));
+            $manifest->put('manifest', $contents);
+            return $manifest;
         }
 
         return;
@@ -118,5 +120,5 @@ class ModuleFilesystem
     {
         return $this->getPath(). '/' . $basename . '/';
     }
-    
+
 }

@@ -2,6 +2,8 @@
 
 namespace Caffeinated\Modules\Manifests;
 
+use Illuminate\Support\Collection;
+
 /**
  * Parses JSON string from a module's module.json to obtain related manifest
  * objects
@@ -21,11 +23,11 @@ class Parser
     private $manifestObject = null;
     
     /**
-     * @param string $manifest Should be valid JSON
+     * @param array $manifest Should be valid JSON
      */
-    public function __construct($manifest)
+    public function __construct(Collection $manifest)
     {
-        $this->data = \json_decode($manifest, true);
+        $this->data = $manifest;
     }
     
     /**
@@ -37,7 +39,7 @@ class Parser
     {
         if (is_null($this->manifestObject)) { 
             $this->manifestObject = new Host(
-                collect($this->data),
+                $this->data,
                 $this->credentialTypeManifests(),
                 $this->strategyManifests()
             );
