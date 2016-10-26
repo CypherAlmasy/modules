@@ -60,7 +60,7 @@ class CredentialTypeElement
         $this->property_name = $data->get('property_name');
         $this->placeholder = $data->get('placeholder');
         $this->input_type = $data->get('input_type');
-        $this->optional = $data->get('optional');
+        $this->optional = $data->get('optional', false);
         $this->rules = $data->get('rules');
         $this->options = $options;
     }
