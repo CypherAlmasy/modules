@@ -34,7 +34,7 @@ class Strategy
     public function __construct(Collection $data)
     {
         $this->name = $data->get('name');
-        $this->class_name = $data->get('class_name');
+        $this->class_name = $data->get('class');
         $this->description = $data->get('description');
         $this->service = $data->get('service');
     }
