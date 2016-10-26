@@ -5,6 +5,7 @@ namespace Caffeinated\Modules\Repositories;
 use Caffeinated\Modules\Manifests\Parser;
 use Caffeinated\Modules\Contracts\Repository;
 use Caffeinated\Modules\Repositories\ModuleFilesystem;
+use Slash\Service\Interfaces\ManifestMapper;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -24,9 +25,17 @@ class EloquentRepository implements Repository
      */
     private $model;
     
-    public function __construct(ModuleFilesystem $moduleFiles)
-    {
+    /**
+     * @var ManifestParser $mapper
+     */
+    private $mapper;
+    
+    public function __construct(
+        ModuleFilesystem $moduleFiles,
+        ManifestMapper $mapper
+    ) {
         $this->moduleFiles = $moduleFiles;
+        $this->mapper = $mapper;
     }
     
     /**
@@ -132,8 +141,8 @@ class EloquentRepository implements Repository
         $model = $this->model;
         foreach ($manifests as $basename => $manifestData) {
             $manifestData['basename'] = $basename;
-            $parser = (new Parser($manifestData))->manifest();
-            $model::createOrUpdateFromManifest($manifest);
+            $manifest = (new Parser($manifestData))->manifest();
+            $this->mapper->createOrUpdateFromManifest($manifest);
         }
     }
 

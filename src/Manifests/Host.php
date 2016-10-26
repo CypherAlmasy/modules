@@ -68,8 +68,8 @@ class Host
      */
     public function __construct(
         Collection $collection,
-        array $credentialTypes,
-        array $strategies
+        Collection $credentialTypes,
+        Collection $strategies
     ) {
         $this->parseFromCollection($collection);
         $this->credentialTypes = $credentialTypes;
